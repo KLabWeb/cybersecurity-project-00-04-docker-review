@@ -1,0 +1,29 @@
+# Practice ignore for docker app
+
+# Python
+__pycache__/
+*.pyc
+*.pyo
+.venv/
+venv/
+
+# Env & secrets
+.env
+*.env
+
+# Git
+.git/
+.gitignore
+
+# Docker
+Dockerfile
+.dockerignore
+
+# IDE / OS
+.vscode/
+.idea/
+.DS_Store
+
+# Tests & cache
+.pytest_cache/
+.mypy_cache/
