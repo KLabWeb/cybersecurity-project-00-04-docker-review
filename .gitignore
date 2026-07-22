@@ -31,3 +31,10 @@ archive.zip
 .DS_Store
 
 .codspeed
+
+# Python
+__pycache__/
+*.pyc
+*.pyo
+.venv/
+venv/
