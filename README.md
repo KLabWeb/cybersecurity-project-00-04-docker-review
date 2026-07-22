@@ -3,13 +3,18 @@
 This is review work which as I did as a Docker refresher, while starting my cybersecurity studies, in Phase 0, the setup & review phase to the study plan.
 
 ## Commands Script
-My [command script](https://github.com/KLabWeb/cybersecurity-project-00-04-docker-review/blob/main/containerize-practice-executable.sh) is all the commands I was running locally while reviewing image pulls, container execution, container run commands, viewing metadata on containers, managing containers and images, containers in interactive mode, bridges, networks, volumes, and other basic Docker features
+
+My [command script](https://github.com/KLabWeb/cybersecurity-project-00-04-docker-review/blob/main/containerize-practice-executable.sh) is all the commands I was running locally while reviewing image pulls, container execution, container run commands, viewing metadata on containers, managing containers and images, containers in interactive mode, bridges, networks, volumes, and other basic Docker features. 
+
+This is an interactive executable bash script. Some commands which would halt execution have been commented out.
 
 ## Dockerfile
-My [Dockerfile](https://github.com/KLabWeb/cybersecurity-project-00-04-docker-review/blob/main/Dockerfile) is a playground file where I use slim Python 3.14 as the base image, the set it to start by running a Uvicorn instance which pulls in its src files from a local FastAPI app to serve a very simple web API. I play around with random instructions here also, like RUN, ADD, and VOLUME.
+
+My [Dockerfile](https://github.com/KLabWeb/cybersecurity-project-00-04-docker-review/blob/main/Dockerfile) is a playground file where I use slim Python 3.14 as the base image, then set my image to start by running a Uvicorn instance which pulls in its src files from a local FastAPI app to serve a very simple web API. I play around with random instructions here also, like RUN, ADD, and VOLUME.
 
 ## Docker Compose
-My [Docker Compose](https://github.com/KLabWeb/cybersecurity-project-00-04-docker-review/blob/main/docker-compose.yaml) file is built to allow live-reloading of my app every time a change in my src files (my FastAPI app) is detected. This is done using the watch command, where I set my rules for watch to sync+restart and rebuild on filechange.
+
+My [Docker Compose](https://github.com/KLabWeb/cybersecurity-project-00-04-docker-review/blob/main/docker-compose.yaml) file is built to allow live-reloading of my FastAPI app every time a change in my src files is detected. This is done using the watch command, where I set my rules for watch to sync+restart and rebuild on local filechange.
 
 ## Related
 
