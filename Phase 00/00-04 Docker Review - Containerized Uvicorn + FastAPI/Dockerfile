@@ -22,9 +22,14 @@ EXPOSE 8080
 RUN useradd test-user
 USER test-user
 
+# Verify now test-user
+# docker run --rm -it uvicorn-test whoami
+# then restore to root
+USER root
+
 # Set default command to start univorn server when container starts
 # Plus look for app.main for app to serve, set default interface, and set listening port
-CMD ["uvicorn", "app.main:app", "--host", "0.0.0.0", "--port", "8080"]
+CMD ["uvicorn", "main:app", "--app-dir", "src", "--host", "0.0.0.0", "--port", "8081"]
 
 # Set custom env var
 ENV APP_ENV=development
@@ -40,3 +45,11 @@ ADD https://github.com/KLabWeb/cybersecurity-study-plan/blob/main/Study_Plan_-_F
 # Verify assets added via
 # docker run --rm -it uvicorn-test /bin/bash
 # ls -R
+
+# Create persistent image volume that exists even past container delete
+COPY ./test-assets/persistent-file.txt /usr/local/app/persistent-storage/persistent-file.txt
+VOLUME ./persistent-storage
+
+# Verify file added via
+# docker run --rm -it uvicorn-test /bin/bash
+# ls -R ./persistent-storage

@@ -1,0 +1,1 @@
+I am not deleted even after container deletion! I am part of the image!
