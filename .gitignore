@@ -32,9 +32,13 @@ archive.zip
 
 .codspeed
 
-# Python
+# python
 __pycache__/
 *.pyc
 *.pyo
 .venv/
 venv/
+
+# env & secrets
+.env
+*.env

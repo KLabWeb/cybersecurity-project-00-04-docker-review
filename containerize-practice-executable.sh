@@ -44,10 +44,10 @@ ps -ef | grep nginx
 
 # Attach container to terminal
 # echo -e "\n\n# Attach container to terminal"
-#echo -e "Enter container ID then press enter to attach to container"
-#read container_id
-#docker attach $container_id
-#docker stop $container_id
+echo -e "Enter container ID then press enter to attach to container"
+read container_id
+docker attach $container_id
+docker stop $container_id
 
 read -p "Press Enter to continue to the next step..."
 
@@ -111,10 +111,10 @@ read -p "Press Enter to continue to the next step..."
 
 # Run nginx container in interactive mode
 # echo -e "\n\n# Run nginx container in interactive mode"
-#docker stop nginx-test
-#docker rm nginx-test
-#docker run --name nginx-test -it nginx bash
-#docker ps
+docker stop nginx-test
+docker rm nginx-test
+docker run --name nginx-test -it nginx bash
+docker ps
 
 #read -p "Press Enter to continue to the next step..."
 
@@ -122,12 +122,12 @@ read -p "Press Enter to continue to the next step..."
 # Not how I can now exit bash without container stopping, unlike when starting interactive
 #echo -e "\n\n# Start container in standard mode, then start in interactive using commands"
 #echo -e "\n\n# Not how I can now exit bash without container stopping, unlike when starting interactive"
-#docker rm nginx-test
-#docker run -d --name nginx-test nginx
-#docker exec -it nginx-test bash
-#ls
-#exit
-#docker ps
+docker rm nginx-test
+docker run -d --name nginx-test nginx
+docker exec -it nginx-test bash
+ls
+exit
+docker ps
 
 #read -p "Press Enter to continue to the next step..."
 
