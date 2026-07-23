@@ -6,7 +6,7 @@ This is review work which as I did as a Docker refresher, while starting my cybe
 
 My [command script](https://github.com/KLabWeb/cybersecurity-project-00-04-docker-review/blob/main/containerize-practice-executable.sh) is all the commands I was running locally while reviewing image pulls, container execution, container run commands, viewing metadata on containers, managing containers and images, containers in interactive mode, bridges, networks, volumes, and other basic Docker features. 
 
-This is an interactive executable bash script. Some commands which would halt execution have been commented out.
+I recorded me running this script on a test environment and recorded my terminal, live, with asciinema. I then put the recording of the script and all the steps that happen in it on a quick static site on Digital Ocean. [View the script execution here!!!](https://cyb-project-00-04-docker-review-zh7g6.ondigitalocean.app/)
 
 ## Dockerfile
 
