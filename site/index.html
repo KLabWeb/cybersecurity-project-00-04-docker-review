@@ -1,0 +1,247 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Docker Container Lifecycle — Kyle Miskell</title>
+<meta name="description" content="A recorded terminal session working through Docker fundamentals: images, container lifecycle, inspection, networking, volumes, and building a containerized FastAPI service.">
+<link rel="stylesheet" href="./vendor/asciinema-player.css">
+<style>
+  :root{
+    --paper:#fcfcfb;
+    --ink:#14171a;
+    --ink-soft:#545c64;
+    --rule:#e2e5e8;
+    --accent:#3a7ab8;
+    --accent-deep:#2c5c8c;
+    --mono:ui-monospace,"SFMono-Regular",Menlo,Consolas,"Liberation Mono",monospace;
+    --sans:system-ui,-apple-system,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+    --col:44rem;
+  }
+  *,*::before,*::after{box-sizing:border-box}
+  html{-webkit-text-size-adjust:100%}
+  body{
+    margin:0; background:var(--paper); color:var(--ink);
+    font-family:var(--sans); font-size:17px; line-height:1.65;
+    -webkit-font-smoothing:antialiased;
+  }
+  a{color:var(--accent); text-underline-offset:2px}
+  a:hover{color:var(--accent-deep)}
+  a:focus-visible{outline:2px solid var(--accent); outline-offset:3px; border-radius:2px}
+
+  .shell{max-width:82rem; margin:0 auto; padding:1.75rem 1.5rem 5rem}
+  .col{max-width:var(--col)}
+
+  /* ---- nav ---- */
+  .topnav{
+    font-family:var(--mono); font-size:.78rem; letter-spacing:.03em;
+    padding-bottom:1.5rem; border-bottom:1px solid var(--rule);
+  }
+  .topnav a{margin-right:.3rem}
+  .topnav .sep{color:var(--ink-soft); margin-right:.3rem}
+  .topnav [aria-current]{color:var(--ink); text-decoration:none; font-weight:600}
+
+  /* ---- masthead ---- */
+  .masthead{padding:2.75rem 0 2rem}
+  .eyebrow{
+    font-family:var(--mono); font-size:.74rem; letter-spacing:.14em;
+    text-transform:uppercase; color:var(--accent); margin:0 0 .7rem;
+  }
+  h1{
+    font-size:clamp(1.85rem,4.2vw,2.6rem); line-height:1.12;
+    letter-spacing:-.02em; margin:0 0 .9rem; font-weight:650;
+  }
+  .lede{font-size:1.09rem; color:var(--ink-soft); margin:0 0 1.4rem}
+  .byline{
+    font-family:var(--mono); font-size:.8rem; color:var(--ink-soft);
+    margin:0; padding-top:1rem; border-top:1px solid var(--rule);
+  }
+  .byline strong{color:var(--ink); font-weight:600}
+
+  /* ---- sections: number lives in the markup, hung in the margin ---- */
+  .band{padding:2.5rem 0 0}
+  .band h2{
+    font-family:var(--mono); font-size:.82rem; font-weight:600;
+    letter-spacing:.08em; text-transform:uppercase;
+    margin:0 0 1.1rem; padding-top:1.1rem; border-top:1px solid var(--rule);
+  }
+  .band h2 .n{color:var(--accent); margin-right:.85rem; font-weight:500}
+
+  /* ---- player: breaks out of the reading column for a 130-col recording ---- */
+  /* player scales its font from the inherited size; keep the base small so
+     130 columns fit, and allow scroll rather than clipping if it overflows */
+  .stage{
+    margin:0 0 .6rem; max-width:1300px;
+    overflow-x:auto; border:1px solid var(--rule); background:#121314;
+  }
+  /* asciinema-player sizes its terminal in `ch` units and writes the font size
+     inline. For this recording that resolves narrower than the glyphs actually
+     paint, so the right edge of each line was being clipped by the player's own
+     container. Pinning the font and letting the boxes fill the stage fixes it;
+     !important is needed because the player sets these inline. */
+  .stage .ap-wrapper,
+  .stage .ap-player,
+  .stage .ap-terminal{width:100% !important; max-width:100% !important}
+  .stage .ap-wrapper{justify-content:flex-start !important}
+  .stage .ap-terminal,
+  .stage .ap-terminal *{
+    font-size:12px !important;
+    font-family:"DejaVu Sans Mono","Liberation Mono",ui-monospace,Menlo,Consolas,monospace !important;
+  }
+  .caption{
+    font-family:var(--mono); font-size:.76rem; color:var(--ink-soft);
+    margin:.55rem 0 0; max-width:1300px;
+  }
+  .noscript{
+    border:1px solid var(--rule); border-left:2px solid var(--accent);
+    background:#fff; padding:.9rem 1.1rem; font-size:.92rem; margin:0 0 1rem;
+  }
+
+  /* ---- content ---- */
+  p{margin:0 0 1rem}
+  ul{margin:0 0 1rem; padding-left:1.15rem}
+  li{margin:.4rem 0}
+  li strong{font-weight:600}
+  code{
+    font-family:var(--mono); font-size:.86em;
+    background:#fff; border:1px solid var(--rule); border-radius:2px; padding:.06em .32em;
+  }
+  pre{
+    font-family:var(--mono); font-size:.82rem; line-height:1.6;
+    background:#fff; border:1px solid var(--rule); border-left:2px solid var(--accent);
+    padding:.9rem 1.1rem; overflow-x:auto; margin:0 0 1rem; max-width:var(--col);
+  }
+  pre code{background:none; border:none; padding:0; font-size:1em}
+
+  dl.spec{
+    display:grid; grid-template-columns:9.5rem 1fr; gap:.4rem 1.25rem;
+    font-family:var(--mono); font-size:.83rem; margin:0; max-width:var(--col);
+  }
+  dl.spec dt{color:var(--ink-soft)}
+  dl.spec dd{margin:0}
+
+  footer{
+    margin-top:3.25rem; padding-top:1.25rem; border-top:1px solid var(--rule);
+    font-family:var(--mono); font-size:.78rem; color:var(--ink-soft);
+  }
+  footer p{margin:.3rem 0}
+
+  @media (max-width:38rem){
+    body{font-size:16px}
+    .shell{padding:1.25rem 1.1rem 3.5rem}
+    dl.spec{grid-template-columns:1fr; gap:0}
+    dl.spec dt{margin-top:.6rem}
+    .band h2 .n{display:block; margin:0 0 .2rem}
+  }
+  @media (prefers-reduced-motion:reduce){
+    *{animation-duration:.01ms !important; transition-duration:.01ms !important}
+  }
+</style>
+</head>
+<body>
+<div class="shell">
+
+  <nav class="topnav" aria-label="Primary">
+    <a href="./" aria-current="page">Demo</a><span class="sep">·</span>
+    <a href="https://github.com/KLabWeb/cybersecurity-project-00-04-docker-review">Source</a><span class="sep">·</span>
+    <a href="https://github.com/KLabWeb/cybersecurity-portfolio">Portfolio</a>
+  </nav>
+
+  <main>
+    <header class="masthead col">
+      <p class="eyebrow">Phase 0 · Docker Review</p>
+      <h1>Docker Container Lifecycle</h1>
+      <p class="lede">
+        A recorded terminal session working through Docker end to end — pulling images, running and
+        inspecting containers, port mapping, custom networks, volumes, and building a containerized
+        FastAPI service that runs as a non-root user.
+      </p>
+      <p class="byline">
+        <strong>Kyle Miskell</strong> — full-stack engineer moving into application security ·
+        <a href="https://github.com/KLabWeb/cybersecurity-study-plan">study plan</a>
+      </p>
+    </header>
+
+    <section class="band" aria-labelledby="h-rec">
+      <h2 id="h-rec"><span class="n">01</span>The session</h2>
+      <noscript>
+        <p class="noscript">
+          The player needs JavaScript. You can still
+          <a href="./docker-lifecycle.cast">download the raw asciicast</a> and replay it locally with
+          <code>asciinema play docker-lifecycle.cast</code>.
+        </p>
+      </noscript>
+      <div class="stage"><div id="player"></div></div>
+      <p class="caption">
+        Recorded with asciinema — the text is real, so you can pause and copy any command straight out
+        of the playback. Raw file: <a href="./docker-lifecycle.cast">docker-lifecycle.cast</a>
+      </p>
+    </section>
+
+    <section class="band col" aria-labelledby="h-covers">
+      <h2 id="h-covers"><span class="n">02</span>What it covers</h2>
+      <ul>
+        <li><strong>Container lifecycle</strong> — run, stop, pause, unpause, kill, remove, and the difference between <code>docker attach</code> and <code>docker exec</code></li>
+        <li><strong>Image management</strong> — pulling by tag and by organization namespace, tagging, history, inspection, and pruning</li>
+        <li><strong>Runtime inspection</strong> — <code>top</code>, <code>stats</code>, <code>inspect</code>, and <code>logs</code> against a running container</li>
+        <li><strong>Networking</strong> — publishing ports to the host, creating a custom bridge network, connecting and disconnecting containers</li>
+        <li><strong>Volumes</strong> — named and anonymous volumes, persistence across container removal, pruning what is unused</li>
+        <li><strong>Building and serving</strong> — a Dockerfile for a Uvicorn-served FastAPI app, run as a non-root user, then the same service under Docker Compose with live reload</li>
+      </ul>
+      <p>
+        The session starts from a deliberately clean slate — a destructive reset gated behind a typed
+        confirmation — so every result is reproducible rather than dependent on leftover state.
+      </p>
+    </section>
+
+    <section class="band col" aria-labelledby="h-stack">
+      <h2 id="h-stack"><span class="n">03</span>Stack</h2>
+      <dl class="spec">
+        <dt>Application</dt><dd>FastAPI served by Uvicorn</dd>
+        <dt>Base image</dt><dd>python:3.14-slim</dd>
+        <dt>Orchestration</dt><dd>Docker Compose (watch: sync + rebuild)</dd>
+        <dt>Host</dt><dd>Linux Mint · Docker Engine + Compose plugin</dd>
+        <dt>Recording</dt><dd>asciinema · 130 × 35</dd>
+      </dl>
+    </section>
+
+    <section class="band col" aria-labelledby="h-run">
+      <h2 id="h-run"><span class="n">04</span>Run it yourself</h2>
+      <p>The script is interactive and pauses between every step, so you can follow along at your own pace.</p>
+<pre><code>git clone https://github.com/KLabWeb/cybersecurity-project-00-04-docker-review
+cd cybersecurity-project-00-04-docker-review
+./containerize-practice-executable.sh</code></pre>
+      <p>
+        Be aware the script resets your local Docker state before it begins — it removes all
+        containers, images, and volumes on the machine, behind a typed confirmation prompt.
+        It should thus only be run in a disposable test environment.
+      </p>
+    </section>
+  </main>
+
+  <footer>
+    <p>
+      <a href="https://github.com/KLabWeb/cybersecurity-project-00-04-docker-review">Source</a> ·
+      <a href="https://github.com/KLabWeb/cybersecurity-portfolio">Portfolio</a> ·
+      <a href="https://github.com/KLabWeb/cybersecurity-study-plan">Study plan</a> ·
+      <a href="https://github.com/KLabWeb/cybersecurity-study-tracker">Study tracker</a>
+    </p>
+    <p>Recorded with asciinema · played with asciinema-player (vendored) · deployed on DigitalOcean App Platform.</p>
+  </footer>
+
+</div>
+
+<script src="./vendor/asciinema-player.min.js"></script>
+<script>
+  (function () {
+    var el = document.getElementById('player');
+    if (!el || !window.AsciinemaPlayer) return;
+    // fit:false + explicit size = deterministic. 130 cols at 13px monospace
+    // is ~1010px, which fits the 1300px stage with room to spare.
+    AsciinemaPlayer.create('./docker-lifecycle.cast', el, {
+      fit: false, terminalFontSize: '13px', idleTimeLimit: 3
+    });
+  })();
+</script>
+</body>
+</html>
