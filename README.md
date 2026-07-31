@@ -8,6 +8,8 @@ My [command script](https://github.com/KLabWeb/cybersecurity-project-00-04-docke
 
 I recorded me running this script on a test environment and recorded my terminal, live, with asciinema. I then put the recording of the script and all the steps that happen in it on a quick static site on Digital Ocean. [View the script execution here!!!](https://cyb-project-00-04-docker-review-zh7g6.ondigitalocean.app/)
 
+See the Docker notes I previously created and reviewed to complete this project [here](https://github.com/KLabWeb/cybersecurity-notes/blob/main/Phase%2000/Reviewed/04-01%20Docker%20Notes.pdf).
+
 ## Dockerfile
 
 My [Dockerfile](https://github.com/KLabWeb/cybersecurity-project-00-04-docker-review/blob/main/Dockerfile) is a playground file where I use slim Python 3.14 as the base image, then set my image to start by running a Uvicorn instance which pulls in its src files from a local FastAPI app to serve a very simple web API. I play around with random instructions here also, like RUN, ADD, and VOLUME.
