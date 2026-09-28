@@ -1,12 +1,12 @@
 # Phase 0: Docker & Docker Compose Review
 
-This is review work which as I did as a Docker refresher, while starting my cybersecurity studies, in Phase 0, the setup & review phase to the study plan.
+This is review work I did as a Docker refresher at the start of my cybersecurity studies, in Phase 0, the setup and review phase of the study plan.
 
 ## Commands Script
 
 My [command script](https://github.com/KLabWeb/cybersecurity-project-00-04-docker-review/blob/main/containerize-practice-executable.sh) is all the commands I was running locally while reviewing image pulls, container execution, container run commands, viewing metadata on containers, managing containers and images, containers in interactive mode, bridges, networks, volumes, and other basic Docker features. 
 
-I recorded me running this script on a test environment and recorded my terminal, live, with asciinema. I then put the recording of the script and all the steps that happen in it on a quick static site on Digital Ocean. [View the script execution here!!!](https://cyb-project-00-04-docker-review-zh7g6.ondigitalocean.app/)
+I recorded myself running this script on a test environment and recorded my terminal, live, with asciinema. I then put the recording of the script and all the steps that happen in it on a quick static site on Digital Ocean. [View the script execution here!!!](https://cyb-project-00-04-docker-review-zh7g6.ondigitalocean.app/)
 
 See the Docker notes I previously created and reviewed to complete this project [here](https://github.com/KLabWeb/cybersecurity-notes/blob/main/Phase%2000/Reviewed/04-01%20Docker%20Notes.pdf).
 
